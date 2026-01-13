@@ -1,0 +1,351 @@
+═══════════════════════════════════════════════════════════════════════════
+  CACHYOS LINUX SETUP AGENT - COMPLETE GUIDE
+  Configured by Claude Code - Your Linux Setup Assistant
+═══════════════════════════════════════════════════════════════════════════
+
+WHAT WAS CONFIGURED:
+────────────────────
+
+1. HYPRLAND OPTIMIZATION (Minimal & Clean, Fast & Snappy)
+   Location: ~/.config/hypr/hyprland.conf
+
+   Features:
+   • Minimal aesthetic with subtle gray borders
+   • Fast animations (2-3x faster than default)
+   • Smart window gaps and borders
+   • Full touchpad gesture support (3-finger swipe for workspaces)
+   • Floating window rules for dialogs and PIP
+   • Performance optimizations (VFR, VRR)
+
+   Apply changes:
+   $ hyprctl reload
+
+2. SYSTEM SAFETY TOOLS
+   Location: ~/.local/bin/system-safety/
+
+   Created Scripts:
+   • safety-manager        - Master control for all safety features
+   • safe-edit            - Edit system files with automatic backup
+   • snapshot-manager     - Btrfs snapshot management
+   • dotfiles-backup      - Git-based config versioning
+   • package-backup       - Package list backup/restore
+
+   Already in your PATH after reloading shell!
+
+3. SECURITY HARDENING SCRIPT
+   Location: ~/setup-system-security.sh
+
+   This script configures:
+   • Btrfs automatic snapshots with Snapper
+   • UFW firewall with secure defaults
+   • Kernel security hardening (sysctl)
+   • Automatic security update checks
+   • Audit logging for critical files
+
+   ⚠ REQUIRES SUDO - Run this when ready!
+
+4. BLUETOOTH MOUSE HELPER
+   Location: ~/connect-bluetooth-mouse.sh
+
+   Use this to connect your Bluetooth mouse easily.
+
+═══════════════════════════════════════════════════════════════════════════
+
+GETTING STARTED - FOLLOW THESE STEPS:
+─────────────────────────────────────
+
+Step 1: Reload Your Shell
+   $ source ~/.bashrc
+
+Step 2: Run the Security Setup (REQUIRES SUDO)
+   $ bash ~/setup-system-security.sh
+
+   This will configure system security, firewall, and snapshots.
+   Answer "yes" when prompted to proceed.
+
+Step 3: Initialize Backup Systems
+   $ safety-manager init-dotfiles
+   $ safety-manager full-backup
+
+   This creates your first full system backup.
+
+Step 4: Test Hyprland Configuration
+   $ hyprctl reload
+
+   Your Hyprland should now have the minimal & clean look with
+   fast animations. Try 3-finger swiping on your touchpad!
+
+Step 5: Connect Bluetooth Mouse (Optional)
+   $ bash ~/connect-bluetooth-mouse.sh
+
+   Follow the prompts to pair your Bluetooth mouse.
+
+═══════════════════════════════════════════════════════════════════════════
+
+DAILY USAGE GUIDE:
+──────────────────
+
+BEFORE SYSTEM UPDATES:
+  $ safety-manager pre "system update"
+  $ sudo pacman -Syu
+  $ safety-manager post "system update"
+
+  This creates before/after snapshots so you can rollback if needed.
+
+CHECK SYSTEM SAFETY STATUS:
+  $ safety-manager status
+
+  Shows status of snapshots, backups, and firewall.
+
+CREATE REGULAR BACKUPS:
+  $ safety-manager full-backup
+
+  Creates snapshot + dotfiles backup + package list backup.
+
+EDIT CRITICAL FILES SAFELY:
+  $ safe-edit /etc/ssh/sshd_config
+
+  Automatically backs up before editing and validates after.
+
+LIST SNAPSHOTS:
+  $ safety-manager list-snapshots
+
+  Shows all Btrfs snapshots with timestamps.
+
+RESTORE FROM SNAPSHOT (Emergency):
+  $ snapshot-manager restore <number>
+  $ reboot
+
+  ⚠ Only use if system is broken!
+
+BACKUP YOUR DOTFILES:
+  $ safety-manager backup-dotfiles
+
+  Saves current configuration to git repository.
+
+═══════════════════════════════════════════════════════════════════════════
+
+HYPRLAND KEYBINDINGS:
+─────────────────────
+
+SUPER = Windows/Command key
+
+Applications:
+  SUPER + Q          → Open terminal (kitty)
+  SUPER + E          → File manager (dolphin)
+  SUPER + R          → App launcher (hyprlauncher)
+  SUPER + C          → Close window
+  SUPER + M          → Exit Hyprland
+
+Window Management:
+  SUPER + V          → Toggle floating
+  SUPER + J          → Toggle split direction
+  SUPER + P          → Pseudo-tile mode
+  SUPER + Arrows     → Move focus between windows
+  SUPER + Mouse Drag → Move window
+  SUPER + Right Click→ Resize window
+
+Workspaces:
+  SUPER + [1-9]      → Switch to workspace 1-9
+  SUPER + SHIFT + [1-9] → Move window to workspace
+  SUPER + S          → Toggle scratchpad workspace
+  SUPER + Mouse Wheel→ Scroll through workspaces
+  3-Finger Swipe     → Swipe between workspaces
+
+Media Keys:
+  Volume Up/Down     → Adjust volume
+  Mute               → Toggle mute
+  Brightness Up/Down → Adjust screen brightness
+  Media Play/Pause   → Control media playback
+
+═══════════════════════════════════════════════════════════════════════════
+
+SECURITY FEATURES:
+──────────────────
+
+FIREWALL (UFW):
+  Check status:
+    $ sudo ufw status verbose
+
+  Allow specific port:
+    $ sudo ufw allow 8080/tcp
+
+  Delete rule:
+    $ sudo ufw delete allow 8080/tcp
+
+SNAPSHOTS:
+  Automatic snapshots are taken:
+  • Hourly: Last 5 hours kept
+  • Daily: Last 7 days kept
+  • Weekly: Last 3 weeks kept
+  • Monthly: Last 2 months kept
+
+  Manual snapshot:
+    $ snapshot-manager create "description"
+
+AUDIT LOGS:
+  View security events:
+    $ sudo ausearch -k identity
+    $ sudo ausearch -k sudo_usage
+
+UPDATE CHECKS:
+  Automatic daily checks configured
+  Check manually:
+    $ checkupdates
+
+═══════════════════════════════════════════════════════════════════════════
+
+TROUBLESHOOTING:
+────────────────
+
+Hyprland config errors:
+  $ cat ~/.config/hypr/hyprland.conf | grep -n "error"
+
+  If errors persist, restore from backup:
+  $ dotfiles-backup restore
+
+Firewall blocking something:
+  Check logs:
+    $ sudo journalctl -u ufw -f
+
+  Temporarily disable (for testing):
+    $ sudo ufw disable
+
+  Re-enable:
+    $ sudo ufw enable
+
+System won't boot after update:
+  1. Boot from live USB
+  2. Mount your root partition
+  3. Restore from snapshot using Snapper
+
+Safety manager not in PATH:
+  $ source ~/.bashrc
+
+  Or manually add:
+  $ export PATH="$HOME/.local/bin/system-safety:$PATH"
+
+Touchpad not working:
+  Check if driver is loaded:
+    $ cat /proc/bus/input/devices | grep -i touchpad
+
+  Install libinput:
+    $ sudo pacman -S libinput xf86-input-libinput
+
+═══════════════════════════════════════════════════════════════════════════
+
+IMPORTANT FILES LOCATIONS:
+──────────────────────────
+
+Configuration:
+  Hyprland config:    ~/.config/hypr/hyprland.conf
+  Bashrc:             ~/.bashrc
+  Safety scripts:     ~/.local/bin/system-safety/
+
+Backups:
+  Dotfiles backup:    ~/.dotfiles-backup/
+  Config backups:     ~/.config-backups/
+  Package backups:    ~/.package-backups/
+  Btrfs snapshots:    /.snapshots/
+
+System Security:
+  Firewall rules:     /etc/ufw/
+  Kernel security:    /etc/sysctl.d/99-security-hardening.conf
+  Audit rules:        /etc/audit/rules.d/security.rules
+  Snapper config:     /etc/snapper/configs/root
+
+═══════════════════════════════════════════════════════════════════════════
+
+MAINTENANCE SCHEDULE:
+─────────────────────
+
+DAILY:
+  • Automatic update checks run daily
+  • Automatic snapshots (hourly/daily)
+
+WEEKLY:
+  • Check system safety status:
+      $ safety-manager status
+  • Create full backup:
+      $ safety-manager full-backup
+
+MONTHLY:
+  • Review and clean old backups:
+      $ safety-manager cleanup
+  • Check disk space:
+      $ df -h
+  • Review audit logs:
+      $ sudo aureport --summary
+
+BEFORE MAJOR CHANGES:
+  • Always create pre-operation snapshot:
+      $ safety-manager pre "description of change"
+  • Test changes
+  • Create post-operation snapshot:
+      $ safety-manager post "description of change"
+
+═══════════════════════════════════════════════════════════════════════════
+
+ASKING YOUR LINUX SETUP AGENT FOR HELP:
+────────────────────────────────────────
+
+I'm Claude Code, your Linux setup agent. You can ask me to:
+
+✓ Help configure and secure your system
+✓ Troubleshoot issues
+✓ Improve Hyprland appearance and performance
+✓ Install and configure software
+✓ Explain system components
+✓ Create custom scripts and automation
+✓ Review and update configurations
+✓ Research best practices
+
+Just describe what you need, and I'll help you implement it safely!
+
+Remember: I have security guardrails to protect critical system files.
+I'll always create backups before making changes.
+
+═══════════════════════════════════════════════════════════════════════════
+
+QUICK REFERENCE COMMANDS:
+─────────────────────────
+
+System Safety:
+  safety-manager status              # Check system safety status
+  safety-manager full-backup         # Create complete backup
+  safety-manager pre "description"   # Before making changes
+  safety-manager post "description"  # After making changes
+
+File Editing:
+  safe-edit <file>                   # Edit with auto-backup
+
+Snapshots:
+  snapshot-manager list              # List all snapshots
+  snapshot-manager create "desc"     # Create manual snapshot
+  snapshot-manager restore <num>     # Restore from snapshot
+
+Backups:
+  dotfiles-backup backup             # Backup configs
+  dotfiles-backup restore            # Restore configs
+  package-backup backup              # Backup package list
+  package-backup restore             # Restore packages
+
+Hyprland:
+  hyprctl reload                     # Reload Hyprland config
+  hyprctl dispatch exit              # Exit Hyprland
+
+Firewall:
+  sudo ufw status                    # Check firewall status
+  sudo ufw allow <port>              # Allow port
+  sudo ufw deny <port>               # Deny port
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎉 Your CachyOS system is now optimized, secured, and backed up!
+
+Next step: Run the security setup script:
+  $ bash ~/setup-system-security.sh
+
+Questions? Just ask your Linux setup agent (me!) for help.
+
+═══════════════════════════════════════════════════════════════════════════

@@ -1,0 +1,115 @@
+═══════════════════════════════════════════════════════════════════════════
+                    🚀 START HERE - CACHYOS SETUP
+═══════════════════════════════════════════════════════════════════════════
+
+Your CachyOS system has been configured by Claude Code (your Linux setup agent).
+
+Everything is ready - just follow these 5 steps:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: Read the Quick Start Guide
+
+    $ cat ~/QUICK-START.md
+
+    This tells you exactly what to do next.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: Run the Security Setup Script
+
+    $ bash ~/setup-system-security.sh
+
+    ⚠️  This requires sudo and will configure:
+       • Firewall (UFW)
+       • Btrfs automatic snapshots
+       • Kernel security hardening
+       • Audit logging
+       • Automatic update checks
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: Initialize Your Backup System
+
+    $ source ~/.bashrc
+    $ safety-manager init-dotfiles
+    $ safety-manager full-backup
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 4: Reload Hyprland Configuration
+
+    $ hyprctl reload
+
+    Your Hyprland is now:
+    • Minimal & clean (subtle gray borders)
+    • Fast & snappy (2-3x faster animations)
+    • Gesture-enabled (3-finger workspace swipe)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 5: Connect Your Bluetooth Mouse (Optional)
+
+    $ bash ~/connect-bluetooth-mouse.sh
+
+    Follow the prompts to pair your Logitech MX Master 2S.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                            📚 DOCUMENTATION
+
+README.md               → Overview and file index
+QUICK-START.md          → Quick reference guide
+SESSION-PROGRESS.md     → Complete session history (share with agent)
+AGENT-INSTRUCTIONS.md   → How to work with your Linux setup agent
+SETUP-GUIDE.txt         → Detailed usage guide and reference
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                        🛠️  WHAT YOU GOT
+
+✅ Optimized Hyprland (minimal & fast)
+✅ 3-layer backup system (snapshots + configs + packages)
+✅ Security hardening ready
+✅ Safety guardrails for system files
+✅ Complete documentation
+✅ Ongoing agent support
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                    🤖 YOUR LINUX SETUP AGENT
+
+I'm Claude Code, configured as your personal Linux setup agent.
+
+TO CONTINUE WORKING WITH ME:
+
+1. Start a new Claude Code session
+2. Share your system state:
+   $ cat ~/SESSION-PROGRESS.md
+3. Tell me what you want to do
+
+I can help with:
+• Configuration and customization
+• Troubleshooting and debugging
+• Security and optimization
+• Software installation and setup
+• Script creation and automation
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                    ⚡ QUICK COMMANDS REFERENCE
+
+safety-manager status           # Check system safety status
+safety-manager full-backup      # Create complete backup
+safety-manager pre "desc"       # Before making changes
+safe-edit <file>               # Edit system files safely
+snapshot-manager list          # List all snapshots
+hyprctl reload                 # Reload Hyprland config
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 You're all set! Start with Step 1 above.
+
+Questions? Read the docs or share SESSION-PROGRESS.md with your agent.
+
+═══════════════════════════════════════════════════════════════════════════
