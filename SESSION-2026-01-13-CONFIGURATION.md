@@ -341,6 +341,105 @@ SUPER + R                           # Keyboard shortcut
 
 ---
 
+## 11. Session Update - Afternoon Changes
+
+### Waybar Enhanced Configuration
+
+**Updated:** `~/.config/waybar/config`
+
+#### New Features
+- **Persistent workspaces:** Shows workspaces 1-10 even when empty
+- **Window icons per workspace:** Displays icons for open windows in each workspace
+- **Icon mappings:** Auto-assigns icons based on window class
+
+```json
+"hyprland/workspaces": {
+    "format": "{id}: {windows}",
+    "format-window-separator": " ",
+    "window-rewrite-default": "",
+    "window-rewrite": {
+        "class<firefox>": "",
+        "class<kitty>": "",
+        "class<code>": "󰨞",
+        "class<discord>": "󰙯"
+    },
+    "persistent-workspaces": {
+        "*": 10
+    }
+}
+```
+
+**Updated:** `~/.config/waybar/style.css`
+- Empty workspaces dimmed (#555555)
+- Active workspace with blue underline (#88c0d0)
+- Urgent workspaces with red blink animation
+- Smooth transitions on all state changes
+
+---
+
+### Docker Installation
+
+**Installed Packages:**
+```bash
+sudo pacman -S docker docker-compose
+```
+
+**Versions:**
+- Docker: 29.1.4
+- Docker Compose: 5.0.1
+
+**Service Configuration:**
+```bash
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+```
+
+---
+
+### Hyprland Tiling - Float by Default
+
+**Changed:** `~/.config/hypr/hyprland.conf`
+
+#### New Behavior
+All windows open floating and centered. Press keybind to tile when needed.
+
+#### Window Rules
+```conf
+windowrulev2 = float, class:^(.*)$
+windowrulev2 = center, class:^(.*)$
+windowrulev2 = size 75% 80%, class:^(.*)$
+```
+
+#### Gap Settings
+```conf
+general {
+    gaps_in = 5
+    gaps_out = 25
+}
+```
+
+#### Dwindle Layout
+```conf
+dwindle {
+    pseudotile = false
+    preserve_split = true
+    force_split = 2
+    smart_split = false
+}
+```
+
+#### Keybinds
+| Keybind | Action |
+|---------|--------|
+| `Super + T` | Toggle float/tile |
+| `Super + V` | Toggle floating |
+| `Super + F` | Maximize (keeps bar) |
+| `Super + Shift + F` | True fullscreen |
+| `Super + Tab` | Cycle windows |
+
+---
+
 **Session Date:** 2026-01-13
 **System:** CachyOS (Arch Linux) with Hyprland
 **Status:** Configuration successful, tested and working

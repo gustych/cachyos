@@ -1,0 +1,132 @@
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: rgba(30, 30, 30, 0.95);
+    color: #ffffff;
+}
+
+/* Workspaces */
+#workspaces {
+    margin: 0 4px;
+}
+
+#workspaces button {
+    padding: 0 8px;
+    background: transparent;
+    color: #888888;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#workspaces button.empty {
+    color: #555555;
+}
+
+#workspaces button.active {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+    border-bottom: 2px solid #88c0d0;
+    font-weight: bold;
+}
+
+#workspaces button.visible {
+    color: #cccccc;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+#workspaces button.urgent {
+    color: #bf616a;
+    border-bottom: 2px solid #bf616a;
+    animation: blink 1s ease infinite;
+}
+
+#workspaces button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Window title */
+#window {
+    margin: 0 8px;
+    color: #cccccc;
+}
+
+/* Clock - centered */
+#clock {
+    padding: 0 16px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+/* Right modules */
+#network,
+#bluetooth,
+#temperature,
+#pulseaudio,
+#battery,
+#tray {
+    padding: 0 10px;
+    margin: 0 2px;
+    color: #cccccc;
+}
+
+#network {
+    color: #88c0d0;
+}
+
+#bluetooth {
+    color: #81a1c1;
+}
+
+#temperature {
+    color: #ebcb8b;
+}
+
+#temperature.critical {
+    color: #bf616a;
+    font-weight: bold;
+}
+
+#pulseaudio {
+    color: #a3be8c;
+}
+
+#battery {
+    color: #b48ead;
+}
+
+#battery.charging {
+    color: #a3be8c;
+}
+
+#battery.warning {
+    color: #ebcb8b;
+}
+
+#battery.critical {
+    color: #bf616a;
+}
+
+#tray {
+    padding: 0 6px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+}
