@@ -127,6 +127,72 @@ hyprctl reload
 
 ---
 
+## Mounting HDD/External Drives (2026-01-13)
+
+### Finding Connected Drives
+```bash
+lsblk -f          # List all drives with filesystem info
+lsblk             # Simple list of block devices
+```
+
+### Common Mount Locations
+- `/mnt/` - Traditional mount point for manual mounts
+- `/media/` - Auto-mounted removable media
+- `/media/$USER/` - User-specific auto-mounts
+
+### Mounting a Drive
+```bash
+# Create mount point
+sudo mkdir -p /mnt/hdd
+
+# Mount NTFS partition
+sudo mount -t ntfs3 /dev/sdX2 /mnt/hdd
+
+# Mount ext4 partition
+sudo mount /dev/sdX2 /mnt/hdd
+
+# Unmount when done
+sudo umount /mnt/hdd
+```
+
+### Windows Storage Spaces Drives
+**Problem**: Linux cannot read Windows Storage Spaces volumes. The partition shows as `data` with no filesystem.
+
+**Symptoms**:
+- `lsblk -f` shows empty FSTYPE
+- `sudo file -s /dev/sdX` returns `data`
+- Mount fails with "wrong fs type, bad superblock"
+- Partition type GUID: `e75caf8f-f680-4cee-afa3-b001e56efc2d`
+
+**Solution**: Must remove drive from Storage Spaces pool in Windows:
+1. Boot into Windows
+2. **Settings → System → Storage → Manage Storage Spaces**
+3. Remove the drive from the pool (backup data first - this erases the drive)
+4. Format in Windows as NTFS, or leave unformatted for Linux
+
+### Formatting a Drive in Linux
+```bash
+# Format as ext4 (best for Linux-only use)
+sudo mkfs.ext4 /dev/sdX2
+
+# Format as NTFS (for Windows compatibility)
+sudo mkfs.ntfs /dev/sdX2
+```
+
+### Troubleshooting Mount Issues
+```bash
+# Check partition info
+sudo fdisk -l /dev/sdX
+
+# Check filesystem type
+sudo file -s /dev/sdX2
+
+# View mount errors
+dmesg | tail -20
+```
+
+---
+
 ## Troubleshooting
 
 ### Waybar not showing icons
