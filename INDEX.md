@@ -18,6 +18,9 @@ Location: `~/CachyOS-Setup-Documentation/`
 | **AGENT-INSTRUCTIONS.md** | How to work with your Linux agent | Before starting new agent sessions |
 | **SNAPSHOT-RECOVERY-GUIDE.md** | **HOW TO ACCESS SNAPSHOTS** | When something breaks! |
 | **PACKAGE-INSTALLATION-GUIDE.md** | All software installation commands | Installing development tools |
+| **GITHUB-SETUP-GUIDE.md** | GitHub SSH setup and git workflow | Setting up GitHub connection |
+| **REMAINING-SECURITY-SETUP.md** | Final security hardening steps | Completing system security setup |
+| **SESSION-2026-01-13-CONFIGURATION.md** | Recent configuration session log | Reference for recent changes |
 | **INDEX.md** | This file - complete file listing | Finding specific files |
 
 ---
@@ -29,8 +32,8 @@ All scripts are now in: `~/CachyOS-Setup-Documentation/`
 | Script | Purpose | Usage |
 |--------|---------|-------|
 | **setup-system-security.sh** | Security hardening (firewall, snapshots) | `bash ~/CachyOS-Setup-Documentation/setup-system-security.sh` |
-| **connect-bluetooth-mouse.sh** | Connect Bluetooth mouse | `bash ~/CachyOS-Setup-Documentation/connect-bluetooth-mouse.sh` |
-| **connect-mouse-improved.sh** | Improved mouse connection script | `bash ~/CachyOS-Setup-Documentation/connect-mouse-improved.sh` |
+| **connect-mouse-improved.sh** | Connect Bluetooth mouse | `bash ~/CachyOS-Setup-Documentation/connect-mouse-improved.sh` |
+| **mount-usb-and-save-key.sh** | Backup SSH keys to USB drive | `bash ~/CachyOS-Setup-Documentation/mount-usb-and-save-key.sh` |
 | **copy-docs-to-hdd.sh** | Copy documentation to HDD | `bash ~/CachyOS-Setup-Documentation/copy-docs-to-hdd.sh` |
 
 ---
@@ -58,7 +61,7 @@ ls -lh ~/CachyOS-Setup-Documentation/
 bash ~/CachyOS-Setup-Documentation/setup-system-security.sh
 
 # Connect mouse
-bash ~/CachyOS-Setup-Documentation/connect-bluetooth-mouse.sh
+bash ~/CachyOS-Setup-Documentation/connect-mouse-improved.sh
 
 # Copy to HDD
 bash ~/CachyOS-Setup-Documentation/copy-docs-to-hdd.sh
@@ -309,9 +312,9 @@ cat ~/CachyOS-Setup-Documentation/SESSION-PROGRESS.md
 
 | Category | File Count | Total Size |
 |----------|------------|------------|
-| Documentation | 9 files | ~85 KB |
-| Scripts | 4 files | ~15 KB |
-| **Total** | **13 files** | **~100 KB** |
+| Documentation | 12 files | ~120 KB |
+| Scripts | 4 files | ~19 KB |
+| **Total** | **16 files** | **~140 KB** |
 
 All files are plain text (Markdown, Bash, or TXT) - readable anywhere!
 
@@ -384,7 +387,7 @@ All answers are probably in:
 
 **Location:** `~/CachyOS-Setup-Documentation/`
 **Last Updated:** 2026-01-13
-**Total Files:** 13 (9 docs + 4 scripts)
+**Total Files:** 16 (12 docs + 4 scripts)
 **All files portable** - copy anywhere, read on any system
 
 ---
