@@ -17,8 +17,8 @@ NC='\033[0m' # No Color
 # Configuration
 BENCHMARK_DIR="${HOME}/.lmstudio-benchmarks"
 RESULTS_DIR="${BENCHMARK_DIR}/results"
-LMSTUDIO_URL="http://localhost:8000/api"
-LMSTUDIO_PORT=8000
+LMSTUDIO_URL="http://localhost:1234/v1"
+LMSTUDIO_PORT=1234
 MODE="${1:-baseline}"
 
 # Test configuration
@@ -99,9 +99,8 @@ check_lmstudio() {
 
 # Get available models
 get_models() {
-    log_info "Fetching available models..."
-    curl -s "${LMSTUDIO_URL}/models" | jq -r '.data[].model' 2>/dev/null || {
-        log_error "Failed to fetch models"
+    curl -s "${LMSTUDIO_URL}/models" | jq -r '.data[].id' 2>/dev/null || {
+        echo "ERROR" >&2
         return 1
     }
 }
@@ -162,12 +161,12 @@ run_speed_test() {
 
     local start_time=$(date +%s.%N)
 
-    # Make request to LMStudio
-    local response=$(curl -s -X POST "${LMSTUDIO_URL}/completions" \
+    # Make request to LMStudio (OpenAI-compatible chat format)
+    local response=$(curl -s -X POST "${LMSTUDIO_URL}/chat/completions" \
         -H "Content-Type: application/json" \
         -d "{
             \"model\": \"${model}\",
-            \"prompt\": \"${prompt}\",
+            \"messages\": [{\"role\": \"user\", \"content\": \"${prompt}\"}],
             \"temperature\": 0.7,
             \"max_tokens\": 256,
             \"stream\": false
@@ -177,8 +176,8 @@ run_speed_test() {
     local end_time=$(date +%s.%N)
     local total_time=$(echo "${end_time} - ${start_time}" | bc)
 
-    # Parse response
-    local completion=$(echo "${response}" | jq -r '.choices[0].text // "ERROR"' 2>/dev/null || echo "ERROR")
+    # Parse response (chat format)
+    local completion=$(echo "${response}" | jq -r '.choices[0].message.content // "ERROR"' 2>/dev/null || echo "ERROR")
     local tokens=$(echo "${response}" | jq -r '.usage.completion_tokens // 0' 2>/dev/null || echo "0")
 
     if [ "${completion}" != "ERROR" ] && [ "${tokens}" != "0" ]; then
@@ -241,18 +240,18 @@ run_quality_test() {
             echo "--- Prompt $((i+1)) ---"
             echo "Question: ${prompts[$i]}"
 
-            local response=$(curl -s -X POST "${LMSTUDIO_URL}/completions" \
+            local response=$(curl -s -X POST "${LMSTUDIO_URL}/chat/completions" \
                 -H "Content-Type: application/json" \
                 -d "{
                     \"model\": \"${model}\",
-                    \"prompt\": \"${prompts[$i]}\",
+                    \"messages\": [{\"role\": \"user\", \"content\": \"${prompts[$i]}\"}],
                     \"temperature\": 0.7,
                     \"max_tokens\": 100,
                     \"stream\": false
                 }" \
                 --max-time "${QUALITY_TEST_TIMEOUT}" 2>/dev/null || echo "{\"error\": \"timeout\"}")
 
-            local answer=$(echo "${response}" | jq -r '.choices[0].text // "ERROR"' 2>/dev/null || echo "ERROR")
+            local answer=$(echo "${response}" | jq -r '.choices[0].message.content // "ERROR"' 2>/dev/null || echo "ERROR")
             echo "Answer: ${answer}"
             echo ""
         done
@@ -307,9 +306,7 @@ run_thermal_test() {
 
 # Get first available model
 get_first_model() {
-    local models
-    models=$(get_models) || return 1
-    echo "${models}" | head -1
+    curl -s "${LMSTUDIO_URL}/models" | jq -r '.data[0].id' 2>/dev/null || return 1
 }
 
 # Run all tests for a mode
