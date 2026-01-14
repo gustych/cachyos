@@ -124,15 +124,22 @@ watch -n 1 /opt/rocm/bin/rocm-smi
 bash ~/CachyOS-Setup-Documentation/lmstudio-benchmark.sh overclocked
 ```
 
-### What to Compare
+### Overclocking Results (Partial)
 
-| Model | Baseline | Overclocked | Gain |
-|-------|----------|-------------|------|
-| Mistral 7B | 63.42 tok/s | ? | ? |
-| Apertus 8B | 57.80 tok/s | ? | ? |
-| GPT-OSS 20B | 14.76 tok/s | ? | ? |
-| Qwen Coder 14B | 5.10 tok/s | ? | ? |
-| Mistral 24B | 2.78 tok/s | ? | ? |
+| Model | Baseline | Overclocked | Status |
+|-------|----------|-------------|--------|
+| Mistral 7B | 63.42 tok/s | 10.28 tok/s | ⚠️ Slower (governor issue) |
+| Apertus 8B | 57.80 tok/s | - | Not tested |
+| GPT-OSS 20B | 14.76 tok/s | - | Not tested |
+| Qwen Coder 14B | 5.10 tok/s | - | Not tested |
+| Mistral 24B | 2.78 tok/s | 2.41 tok/s | Slight improvement |
+
+### Issues Found
+
+1. **CPU Governor** - Was set to `powersave`, changed to `performance`
+2. **Performance regression** - Mistral 7B slower despite governor change
+3. **LM Studio config** - GPU Layers and other settings may need adjustment
+4. **Incomplete testing** - Only partial overclocking results
 
 ---
 
@@ -156,4 +163,14 @@ sudo reboot
 
 ---
 
-**Last Updated:** 2026-01-14 21:55
+### Next Steps for Overclocking
+
+1. **Investigate performance regression** - Why is Mistral 7B slower with performance governor?
+2. **Check LM Studio GPU Layers** - Ensure GPU acceleration is properly configured
+3. **Test remaining models** - Apertus 8B, GPT-OSS 20B, Qwen Coder 14B
+4. **Check BIOS overclocking** - Verify CPU/GPU boost is actually enabled
+5. **Monitor throttling** - Check if thermal or power limits are being hit
+
+---
+
+**Last Updated:** 2026-01-14 22:23
