@@ -21,6 +21,7 @@ Location: `~/CachyOS-Setup-Documentation/`
 | **GITHUB-SETUP-GUIDE.md** | GitHub SSH setup and git workflow | Setting up GitHub connection |
 | **REMAINING-SECURITY-SETUP.md** | Final security hardening steps | Completing system security setup |
 | **SESSION-2026-01-13-CONFIGURATION.md** | Recent configuration session log | Reference for recent changes |
+| **LMSTUDIO-BENCHMARKING.md** | LMStudio performance testing guide | Testing normal vs overclocking modes |
 | **INDEX.md** | This file - complete file listing | Finding specific files |
 
 ---
@@ -35,6 +36,9 @@ All scripts are now in: `~/CachyOS-Setup-Documentation/`
 | **connect-mouse-improved.sh** | Connect Bluetooth mouse | `bash ~/CachyOS-Setup-Documentation/connect-mouse-improved.sh` |
 | **mount-usb-and-save-key.sh** | Backup SSH keys to USB drive | `bash ~/CachyOS-Setup-Documentation/mount-usb-and-save-key.sh` |
 | **copy-docs-to-hdd.sh** | Copy documentation to HDD | `bash ~/CachyOS-Setup-Documentation/copy-docs-to-hdd.sh` |
+| **lmstudio-benchmark.sh** | LMStudio performance benchmarking | `bash ~/CachyOS-Setup-Documentation/lmstudio-benchmark.sh baseline\|overclocked\|both` |
+| **monitor-performance.sh** | Real-time performance monitoring | `bash ~/CachyOS-Setup-Documentation/monitor-performance.sh baseline\|overclocked &` |
+| **compare-benchmarks.py** | Analyze and compare benchmark results | `python3 ~/CachyOS-Setup-Documentation/compare-benchmarks.py` |
 
 ---
 
@@ -312,9 +316,9 @@ cat ~/CachyOS-Setup-Documentation/SESSION-PROGRESS.md
 
 | Category | File Count | Total Size |
 |----------|------------|------------|
-| Documentation | 12 files | ~120 KB |
-| Scripts | 4 files | ~19 KB |
-| **Total** | **16 files** | **~140 KB** |
+| Documentation | 13 files | ~150 KB |
+| Scripts | 7 files | ~30 KB |
+| **Total** | **20 files** | **~180 KB** |
 
 All files are plain text (Markdown, Bash, or TXT) - readable anywhere!
 
@@ -386,8 +390,8 @@ All answers are probably in:
 ---
 
 **Location:** `~/CachyOS-Setup-Documentation/`
-**Last Updated:** 2026-01-13
-**Total Files:** 16 (12 docs + 4 scripts)
+**Last Updated:** 2026-01-14
+**Total Files:** 20 (13 docs + 7 scripts)
 **All files portable** - copy anywhere, read on any system
 
 ---
