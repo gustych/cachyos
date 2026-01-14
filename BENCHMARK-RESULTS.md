@@ -103,10 +103,36 @@ All models answered correctly:
 
 **Status:** Pending (next session)
 
-Will test same models with:
-- CPU overclocking
-- GPU overclocking (if applicable)
-- Compare speed gains vs baseline
+### Test Order (run in this sequence)
+
+1. **Mistral 7B** - Load and run benchmark
+2. **Apertus 8B** - Load and run benchmark
+3. **GPT-OSS 20B** - Load and run benchmark
+4. **Qwen 2.5 Coder 14B** - Load and run benchmark
+5. **Mistral Small 24B** - Load and run benchmark (optional, slow)
+
+### Commands Ready
+
+```bash
+# Start LM Studio
+~/.local/bin/lm-studio &
+
+# Monitor GPU (separate terminal)
+watch -n 1 /opt/rocm/bin/rocm-smi
+
+# Run benchmark (after loading each model)
+bash ~/CachyOS-Setup-Documentation/lmstudio-benchmark.sh overclocked
+```
+
+### What to Compare
+
+| Model | Baseline | Overclocked | Gain |
+|-------|----------|-------------|------|
+| Mistral 7B | 63.42 tok/s | ? | ? |
+| Apertus 8B | 57.80 tok/s | ? | ? |
+| GPT-OSS 20B | 14.76 tok/s | ? | ? |
+| Qwen Coder 14B | 5.10 tok/s | ? | ? |
+| Mistral 24B | 2.78 tok/s | ? | ? |
 
 ---
 
