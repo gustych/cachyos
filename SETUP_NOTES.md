@@ -74,6 +74,42 @@ docker-compose --version
 
 ---
 
+## Workspace Wallpaper Daemon (2026-01-16)
+
+### Location
+- Script: `~/.local/bin/workspace-wallpaper-daemon`
+- Config: `~/.config/hypr/workspace-wallpapers.json`
+- Backup: `workspace-wallpaper-daemon.sh` in this repo
+
+### Purpose
+Automatically changes wallpaper when switching workspaces.
+
+### Configuration
+Edit `~/.config/hypr/workspace-wallpapers.json`:
+```json
+{
+  "1": "minimal-nature.jpg",
+  "2": "monochrome-minimal.jpg",
+  "3": "abstract-minimalist.jpg",
+  "4": "dark-minimal.jpg",
+  "5": "forest-dark.jpg",
+  "6": "mountain-minimal.jpg"
+}
+```
+
+Wallpapers are read from `~/Pictures/Wallpapers/`.
+
+### Key Fix
+Original script used `socat` for IPC socket listening, which wasn't installed. Rewrote to use polling (checks workspace every 0.2s) - lightweight and works without extra dependencies.
+
+### Auto-start
+Added to `~/.config/hypr/hyprland.conf`:
+```conf
+exec-once = bash -c 'sleep 1 && workspace-wallpaper-daemon' &
+```
+
+---
+
 ## Smart Toggle Float Script (2026-01-16)
 
 ### Location
