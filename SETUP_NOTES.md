@@ -74,6 +74,39 @@ docker-compose --version
 
 ---
 
+## Smart Toggle Float Script (2026-01-16)
+
+### Location
+- Script: `~/.local/bin/smart-toggle-float`
+- Backup: `smart-toggle-float.sh` in this repo
+
+### Purpose
+Toggle windows between tiled and small centered floating with `Super + T`.
+
+### Behavior
+- **Tiled window + Super+T** → Small centered floating window (40% × 50% of screen)
+- **Floating window + Super+T** → Tiles the window back
+
+### Key Fix
+The original script failed because `resizewindowpixel` and `movewindowpixel` need explicit window addressing. After `togglefloating`, the active window reference can be lost. Fix: capture window address before toggle and target it explicitly.
+
+```bash
+# Get window address before toggle
+win_addr=$(hyprctl activewindow -j | jq -r '.address')
+
+# Use address in resize/move commands
+hyprctl dispatch resizewindowpixel "exact $width $height,address:$win_addr"
+hyprctl dispatch movewindowpixel "exact $x $y,address:$win_addr"
+```
+
+### Installation
+```bash
+cp smart-toggle-float.sh ~/.local/bin/smart-toggle-float
+chmod +x ~/.local/bin/smart-toggle-float
+```
+
+---
+
 ## Hyprland Tiling Configuration (2026-01-13)
 
 ### Location
@@ -84,7 +117,7 @@ All windows open floating and centered. Press keybind to tile when needed.
 
 **How it works:**
 - New windows float centered at 75% x 80% of screen
-- Press `Super + T` to tile a window
+- Press `Super + T` to toggle to small centered float or tile
 - Once tiled, windows split properly (dwindle layout)
 
 ### Window Rules
