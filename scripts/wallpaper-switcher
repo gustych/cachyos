@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Wallpaper Switcher for swww
+# Usage: wallpaper-switcher [name] or wallpaper-switcher next/prev/random
+
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+TRANSITION=${2:-fade}
+TRANSITION_DURATION=${3:-2}
+
+# Check if swww is running
+if ! command -v swww &> /dev/null; then
+    echo "swww not installed"
+    exit 1
+fi
+
+# Get list of wallpapers
+get_wallpapers() {
+    find "$WALLPAPER_DIR" -maxdepth 1 \( -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) -type f | sort
+}
+
+# Current wallpaper
+get_current() {
+    swww query 2>/dev/null | grep -oP '(?<=image: )[^,]+' | head -1
+}
+
+# Set wallpaper
+set_wallpaper() {
+    local file="$1"
+    if [ -f "$file" ]; then
+        swww img "$file" --transition-type "$TRANSITION" --transition-duration "$TRANSITION_DURATION"
+        echo "Set wallpaper: $(basename "$file")"
+    else
+        echo "File not found: $file"
+        exit 1
+    fi
+}
+
+# List all wallpapers
+list_wallpapers() {
+    echo "Available wallpapers:"
+    get_wallpapers | nl | sed 's|'"$WALLPAPER_DIR"'||g'
+}
+
+case "$1" in
+    list)
+        list_wallpapers
+        ;;
+    next)
+        current=$(get_current)
+        wallpapers=($(get_wallpapers))
+        for i in "${!wallpapers[@]}"; do
+            if [[ "${wallpapers[$i]}" == "$current" ]]; then
+                next_idx=$(( (i + 1) % ${#wallpapers[@]} ))
+                set_wallpaper "${wallpapers[$next_idx]}"
+                break
+            fi
+        done
+        ;;
+    prev)
+        current=$(get_current)
+        wallpapers=($(get_wallpapers))
+        for i in "${!wallpapers[@]}"; do
+            if [[ "${wallpapers[$i]}" == "$current" ]]; then
+                prev_idx=$(( (i - 1 + ${#wallpapers[@]}) % ${#wallpapers[@]} ))
+                set_wallpaper "${wallpapers[$prev_idx]}"
+                break
+            fi
+        done
+        ;;
+    random)
+        wallpapers=($(get_wallpapers))
+        random_idx=$(( RANDOM % ${#wallpapers[@]} ))
+        set_wallpaper "${wallpapers[$random_idx]}"
+        ;;
+    *)
+        if [ -z "$1" ]; then
+            list_wallpapers
+        else
+            # Try to find wallpaper by name
+            file=$(find "$WALLPAPER_DIR" -maxdepth 1 \( -name "*$1*" \) -type f | head -1)
+            if [ -n "$file" ]; then
+                set_wallpaper "$file"
+            else
+                echo "Wallpaper not found: $1"
+                list_wallpapers
+                exit 1
+            fi
+        fi
+        ;;
+esac

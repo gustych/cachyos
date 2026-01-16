@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# Workspace Wallpaper Manager
+# Manage which wallpaper is used for each workspace
+
+CONFIG_FILE="$HOME/.config/hypr/workspace-wallpapers.json"
+WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+
+# Show current mappings
+show_mappings() {
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+    echo "Workspace → Wallpaper Mappings"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    for i in {1..10}; do
+        wallpaper=$(jq -r ".\"$i\" // \"default.png\"" "$CONFIG_FILE" 2>/dev/null)
+        printf "Workspace %2d → %-30s\n" "$i" "$wallpaper"
+    done
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+# List available wallpapers
+list_wallpapers() {
+    echo "Available Wallpapers:"
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+    ls -1 "$WALLPAPER_DIR" | grep -E '\.(png|jpg|jpeg)$' | nl
+
+    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+}
+
+# Set wallpaper for workspace
+set_workspace_wallpaper() {
+    local workspace=$1
+    local wallpaper=$2
+
+    if [ -z "$workspace" ] || [ -z "$wallpaper" ]; then
+        echo "Usage: workspace-wallpaper-manager set <workspace> <wallpaper>"
+        echo "Example: workspace-wallpaper-manager set 1 minimal-nature.jpg"
+        return 1
+    fi
+
+    if ! [[ "$workspace" =~ ^[0-9]+$ ]] || [ "$workspace" -lt 1 ] || [ "$workspace" -gt 10 ]; then
+        echo "Error: Workspace must be between 1-10"
+        return 1
+    fi
+
+    if [ ! -f "$WALLPAPER_DIR/$wallpaper" ]; then
+        echo "Error: Wallpaper not found: $wallpaper"
+        list_wallpapers
+        return 1
+    fi
+
+    jq ".\"$workspace\" = \"$wallpaper\"" "$CONFIG_FILE" > "${CONFIG_FILE}.tmp" && \
+    mv "${CONFIG_FILE}.tmp" "$CONFIG_FILE"
+
+    echo "✓ Workspace $workspace → $wallpaper"
+    show_mappings
+}
+
+# Reset to default mappings
+reset_mappings() {
+    cat > "$CONFIG_FILE" << 'EOF'
+{
+  "1": "minimal-nature.jpg",
+  "2": "monochrome-minimal.jpg",
+  "3": "abstract-minimalist.jpg",
+  "4": "dark-minimal.jpg",
+  "5": "forest-dark.jpg",
+  "6": "mountain-minimal.jpg",
+  "7": "nordic-dark.jpg",
+  "8": "geometric-dark.jpg",
+  "9": "gray-gradient.png",
+  "10": "default.png"
+}
+EOF
+    echo "✓ Reset to default mappings"
+    show_mappings
+}
+
+case "$1" in
+    show|list)
+        show_mappings
+        ;;
+    wallpapers)
+        list_wallpapers
+        ;;
+    set)
+        set_workspace_wallpaper "$2" "$3"
+        ;;
+    reset)
+        reset_mappings
+        ;;
+    *)
+        echo "Workspace Wallpaper Manager"
+        echo ""
+        echo "Usage:"
+        echo "  workspace-wallpaper-manager show       # Show current mappings"
+        echo "  workspace-wallpaper-manager wallpapers # List available wallpapers"
+        echo "  workspace-wallpaper-manager set <ws> <file>"
+        echo "  workspace-wallpaper-manager reset      # Reset to defaults"
+        echo ""
+        echo "Examples:"
+        echo "  workspace-wallpaper-manager set 1 minimal-nature.jpg"
+        echo "  workspace-wallpaper-manager set 5 monochrome-minimal.jpg"
+        echo ""
+        show_mappings
+        ;;
+esac

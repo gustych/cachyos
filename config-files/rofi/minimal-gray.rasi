@@ -1,0 +1,43 @@
+* {
+    background-color: #1a1a1aee;
+    border-color: #888888;
+    text-color: #e0e0e0;
+    spacing: 0;
+    width: 512px;
+}
+
+element-icon {
+    size: 1em;
+    padding: 0 10px 0 0;
+}
+
+element-text {
+    text-color: inherit;
+}
+
+element selected {
+    background-color: #888888;
+    text-color: #1a1a1a;
+}
+
+inputbar {
+    padding: 12px;
+    spacing: 12px;
+}
+
+listview {
+    lines: 8;
+    columns: 1;
+}
+
+mainbox {
+    children: [inputbar, listview];
+    spacing: 12px;
+    padding: 12px;
+}
+
+window {
+    border: 2px;
+    border-radius: 8px;
+    padding: 0;
+}

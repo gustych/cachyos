@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# Smart Toggle Float - Only toggles float on/off
+# When floating: centers and sizes to 50% width, 60% height
+# When tiling: just toggles back (no resizing)
+
+# Get current float state BEFORE toggle
+current_window=$(hyprctl activewindow -j)
+was_floating=$(echo "$current_window" | jq -r '.floating')
+
+# Toggle floating
+hyprctl dispatch togglefloating
+
+# If it was tiling and is now floating, resize and center
+if [ "$was_floating" = "false" ]; then
+    sleep 0.1  # Brief delay for toggle to complete
+    hyprctl dispatch resizewindowpixel 50% 60%
+    hyprctl dispatch centerwindow
+fi
