@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+[ -z "$TMUX" ] && echo "Error: Not in tmux" && exit 1
+tmux kill-pane
+echo "Pane closed"

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+TOOL="${1:-opencode}"
+[ -z "$TMUX" ] && echo "Error: Not in tmux" && exit 1
+tmux split-window -v -c "#{pane_current_path}" "$TOOL"
+tmux select-pane -t 0
+echo "Started $TOOL"
