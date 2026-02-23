@@ -2,33 +2,42 @@
 
 AI-enhanced developer workflow using LazyVim + tmux + OpenCode/Codex.
 
-## Quick Start
+## Setup
 
 ```bash
-# Clone to XDG standard location
+# 1. Clone this repo to XDG location
 git clone https://github.com/wgusta/cachyos.git ~/.config/dotfiles
 
-# Create symlinks
-ln -sf ~/.config/dotfiles/.config/nvim ~/.config/nvim
+# 2. Clone LazyVim starter (required)
+git clone https://github.com/LazyVim/starter ~/.config/nvim
+rm -rf ~/.config/nvim/.git
+
+# 3. Add AI plugins
+cp ~/.config/dotfiles/.config/nvim/lua/plugins/ai.lua ~/.config/nvim/lua/plugins/
+
+# 4. Create symlinks
 ln -sf ~/.config/dotfiles/.config/tmux ~/.config/tmux
 ln -sf ~/.config/dotfiles/bin/* ~/.local/bin/
 
-# Add tmux config
+# 5. Add tmux config
 echo "source-file ~/.config/tmux/tmux.conf" >> ~/.tmux.conf
 
-# Initialize LazyVim
+# 6. Install plugins
 nvim +LazySync
+
+# 7. Reload tmux
+tmux source-file ~/.config/tmux/tmux.conf
 ```
 
 ## Tmux Keybindings
 
 | Key | Action |
 |-----|--------|
-| `Ctrl-a` | Prefix (instead of Ctrl-b) |
-| `Ctrl-a o` | Split vertical + opencode |
-| `Ctrl-a a` | TDD mode (3 panes) |
+| `Ctrl-a` | Prefix |
+| `Ctrl-a o` | Split + opencode |
+| `Ctrl-a a` | TDD mode |
 | `Ctrl-a X` | Kill pane |
-| `Ctrl-a h/j/k/l` | Navigate panes (vi-style) |
+| `Ctrl-a h/j/k/l` | Navigate |
 
 ## Neovim Keybindings
 
@@ -40,17 +49,12 @@ nvim +LazySync
 ## Scripts
 
 - `ai-pane [opencode|codex]` - Quick AI pane
-- `ai-tdd` - TDD mode (opencode + test)
-- `close-ai-pane` - Close AI pane
-
-## Context Files
-
-- `AGENTS.md` - OpenCode project context
-- `.opencode/skills/tdd/SKILL.md` - TDD skill
+- `ai-tdd` - TDD mode
+- `close-ai-pane` - Close pane
 
 ## Requirements
 
 - Neovim >= 0.11.2
 - tmux
-- OpenCode and/or Codex CLI
-- ripgrep, fd, fzf (for telescope)
+- OpenCode / Codex CLI
+- ripgrep, fd, fzf
