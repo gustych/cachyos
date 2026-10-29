@@ -1,6 +1,6 @@
 # Desktop polish
 
-Agreed scope: bring Omarchy's searchable menu and discoverable shortcut conventions to CachyOS, retaining Fuzzel, Ghostty, Dolphin, existing workspace behavior, and media keys. Appearance is a later milestone. Implementation is deployed. Automated validation passed; final interactive checks are listed in ../../docs/desktop-workflow.md.
+Agreed scope: bring Omarchy's searchable menu and discoverable shortcut conventions to CachyOS, retaining Fuzzel, Ghostty, Dolphin, existing workspace behavior, and media keys. Appearance is a later milestone. Implementation is deployed and all four tickets are closed. Automated validation passed and the user confirmed the requested interactive checks worked. Validation and recovery are documented in ../../docs/desktop-workflow.md.
 
 ## Local tracker
 

@@ -4,7 +4,7 @@
 
 **Blocked by:** 01: Apps and actions menu; 02: Core shortcuts and searchable help; 03: Screenshot capture.
 
-**Status:** awaiting-user-verification
+**Status:** done
 
 - [ ] Verify the complete flow in the actual desktop session: open the menu, find an app/action, view shortcut help, open terminal/browser/file manager, and capture a region.
 - [ ] Verify audio, microphone mute, Bluetooth, networking, lock, and power-menu targets; cancel shutdown/reboot confirmation without invoking either operation.
@@ -21,4 +21,8 @@ Each earlier ticket must validate and provide rollback for its own change. This 
 
 ## Implementation result
 
-Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. Status remains awaiting-user-verification because visual interaction and lock/unlock authentication have not been confirmed by the user.
+Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. The user subsequently confirmed that the requested interactive checks worked.
+
+## User verification
+
+2026-10-29: After confirming Super+Return and Super+Escape worked, the user was asked to check shortcut help, screenshots and lock/unlock, and replied "it worked". Closed on that confirmation. Automated results and agent limitations remain documented in the workflow guide.

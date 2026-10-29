@@ -4,7 +4,7 @@
 
 **Blocked by:** 01: Apps and actions menu.
 
-**Status:** awaiting-user-verification
+**Status:** done
 
 - [x] Verify existing Wayland capture tools in the real desktop environment; select a maintained tool compatible with the installed Hyprland version and record any required package installation.
 - [x] Print and the command-menu screenshot entry open the same region capture flow.
@@ -21,4 +21,8 @@ The inspection found no screenshot binding or available capture utility on its P
 
 ## Implementation result
 
-Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. Status remains awaiting-user-verification because visual interaction and lock/unlock authentication have not been confirmed by the user.
+Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. The user subsequently confirmed that the requested interactive checks worked.
+
+## User verification
+
+2026-10-29: After confirming Super+Return and Super+Escape worked, the user was asked to check shortcut help, screenshots and lock/unlock, and replied "it worked". Closed on that confirmation. Automated results and agent limitations remain documented in the workflow guide.

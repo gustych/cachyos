@@ -47,7 +47,7 @@ Verified automatically on 2026-10-29:
 - The real Fuzzel launcher and help processes open successfully, then were cleaned up by terminating only the test processes. This is a smoke check, not a claim that keyboard selection was exercised.
 - A real 1x1 region capture returns a valid PNG in memory, without saving a screenshot or changing the clipboard.
 
-User checks still needed:
+Interactive checklist (user subsequently confirmed the requested checks worked on 2026-10-29):
 
 1. Super+Space: search for an app and for Audio; launch each and check appearance/readability.
 2. Super+K: search for terminal or screenshot; Escape should close help.
@@ -77,3 +77,5 @@ luac -p .config/hypr/hyprland.lua
 Hyprland --verify-config -c "$PWD/.config/hypr/hyprland.lua"
 fuzzel --config "$PWD/.config/fuzzel/fuzzel.ini" --check-config
 ```
+
+User confirmation on 2026-10-29: after Super+Return and Super+Escape initially failed, both worked during diagnosis without a configuration change. The cause was not established. Following the request to check help, screenshots and lock/unlock, the user replied "it worked". The desktop-polish tickets are closed on this confirmation; this does not change which checks the agent directly observed.

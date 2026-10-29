@@ -4,7 +4,7 @@
 
 **Blocked by:** None (can start immediately).
 
-**Status:** awaiting-user-verification
+**Status:** done
 
 - [x] Establish the running Hyprland version, active configuration entrypoint, and relationship between live settings and Git-managed configuration before editing.
 - [x] Capture affected configuration state and provide restoration steps before activating changes; preserve unrelated local edits.
@@ -23,4 +23,8 @@ The inspected Waybar already refers to audio, Bluetooth, and network settings to
 
 ## Implementation result
 
-Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. Status remains awaiting-user-verification because visual interaction and lock/unlock authentication have not been confirmed by the user.
+Deployed on 2026-10-29. Automated checks passed; see the desktop workflow guide for observed results, the remaining interactive checks, and exact rollback. The user subsequently confirmed that the requested interactive checks worked.
+
+## User verification
+
+2026-10-29: After confirming Super+Return and Super+Escape worked, the user was asked to check shortcut help, screenshots and lock/unlock, and replied "it worked". Closed on that confirmation. Automated results and agent limitations remain documented in the workflow guide.

@@ -515,3 +515,5 @@ Your CachyOS system is now:
 Implemented the desktop-polish tickets: Fuzzel searches apps and eleven desktop actions; searchable shortcut help reads the active session; core bindings follow the approved map with temporary launcher/terminal aliases. Added region screenshots with save/copy/cancel, power confirmation, and a minimal hyprlock configuration. Preserved the existing live Lua setup instead of deploying the historical hyprland.conf. The user installed grim, slurp, hyprlock and blueman.
 
 Automated CLI, configuration, desktop-entry, live-binding and Wayland capture checks pass. Interactive visual, screenshot paste and lock/unlock checks remain pending; tickets are awaiting-user-verification. See docs/desktop-workflow.md for exact commands, deployment and recovery. Deployment backup: /home/gusta/.local/state/desktop-polish/20261029-100401-771174. No reboot, shutdown, suspend or lock was triggered by tests.
+
+2026-10-29 verification follow-up: the user confirmed the requested interactive desktop checks worked. Closed the four desktop-polish tickets. The transient Super+Return/Escape report resolved without a configuration change; no root cause is claimed.
