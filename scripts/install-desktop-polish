@@ -1,0 +1,73 @@
+#!/usr/bin/python3
+"""Install this machine's reviewed desktop configuration with an exact rollback."""
+import datetime
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+repo = Path(__file__).resolve().parents[1]
+home = Path.home()
+files = {
+    repo / 'bin/desktop-menu': home / '.local/bin/desktop-menu',
+    repo / '.config/hypr/hyprland.lua': home / '.config/hypr/hyprland.lua',
+    repo / '.config/hypr/hyprlock.conf': home / '.config/hypr/hyprlock.conf',
+    repo / '.config/fuzzel/fuzzel.ini': home / '.config/fuzzel/fuzzel.ini',
+}
+for source in (repo / '.local/share/applications').glob('cachyos-desktop-*.desktop'):
+    files[source] = home / '.local/share/applications' / source.name
+for command in (
+    ['Hyprland', '--verify-config', '-c', str(repo / '.config/hypr/hyprland.lua')],
+    ['fuzzel', '--config', str(repo / '.config/fuzzel/fuzzel.ini'), '--check-config'],
+):
+    subprocess.run(command, check=True)
+
+backup = home / '.local/state/desktop-polish' / datetime.datetime.now().strftime('%Y%m%d-%H%M%S-%f')
+backup.mkdir(parents=True, mode=0o700)
+manifest = []
+for number, target in enumerate(files.values()):
+    exists = target.exists() or target.is_symlink()
+    saved = backup / str(number)
+    if exists:
+        shutil.copy2(target, saved, follow_symlinks=False)
+    manifest.append({'path': str(target), 'existed': exists, 'backup': str(saved)})
+(backup / 'manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
+(backup / 'restore.py').write_text('''from pathlib import Path
+import json, shutil, subprocess
+for item in json.loads((Path(__file__).parent / 'manifest.json').read_text()):
+    target = Path(item['path'])
+    if target.exists() or target.is_symlink():
+        target.unlink()
+    if item['existed']:
+        shutil.copy2(item['backup'], target, follow_symlinks=False)
+subprocess.run(['hyprctl', 'reload', 'config-only'], check=True)
+print('Restored previous desktop configuration')
+''')
+print(f'Rollback: python3 {backup}/restore.py', flush=True)
+try:
+    for source, target in files.items():
+        target.parent.mkdir(parents=True, exist_ok=True)
+        # Respect the repository's safe-edit rule for the active compositor config.
+        if target == home / '.config/hypr/hyprland.lua':
+            with tempfile.TemporaryDirectory(prefix='desktop-polish-editor-') as directory:
+                editor = Path(directory) / 'copy-reviewed'
+                editor.write_text('#!/usr/bin/python3\nimport os, shutil, sys\nshutil.copyfile(os.environ["DESKTOP_REVIEWED_SOURCE"], sys.argv[1])\n')
+                editor.chmod(0o700)
+                subprocess.run([str(home / '.local/bin/system-safety/safe-edit'), str(target)],
+                               env=dict(os.environ, EDITOR=str(editor), DESKTOP_REVIEWED_SOURCE=str(source)), check=True)
+        else:
+            # Replace through a temporary file so a watched config is never half written.
+            with tempfile.NamedTemporaryFile(dir=target.parent, delete=False) as staged:
+                stage = Path(staged.name)
+            shutil.copy2(source, stage)
+            stage.replace(target)
+    subprocess.run(['hyprctl', 'reload', 'config-only'], check=True)
+    errors = subprocess.check_output(['hyprctl', 'configerrors'], text=True).strip()
+    if errors:
+        raise RuntimeError(errors)
+except Exception:
+    subprocess.run(['python3', str(backup / 'restore.py')], check=True)
+    raise
+print('Desktop configuration installed; no session restart needed.')

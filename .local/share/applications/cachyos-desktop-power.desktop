@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Power menu — Super+Escape
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu power
+Icon=system-shutdown
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

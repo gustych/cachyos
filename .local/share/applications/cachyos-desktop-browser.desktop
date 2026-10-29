@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Default browser — Super+Shift+Return
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu browser
+Icon=web-browser
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

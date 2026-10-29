@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Shortcut reference — Super+K
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu help
+Icon=preferences-desktop-keyboard-shortcuts
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

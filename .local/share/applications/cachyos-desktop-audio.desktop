@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Audio settings
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu audio
+Icon=audio-volume-high
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;
