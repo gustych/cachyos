@@ -107,7 +107,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('action', nargs='?', default='menu', choices=[
         'menu', 'help', 'terminal', 'browser', 'files', 'audio', 'bluetooth',
-        'network', 'mic', 'lock', 'power', 'reboot', 'poweroff', 'screenshot'])
+        'network', 'mic', 'lock', 'power', 'reboot', 'poweroff', 'screenshot',
+        'scratchpad', 'console'])
     args = parser.parse_args()
     commands = {
         'menu': ['fuzzel', '--terminal=ghostty -e'],
@@ -116,6 +117,8 @@ def main():
         'bluetooth': ['blueman-manager'], 'network': ['ghostty', '-e', 'nmtui'],
         'mic': ['wpctl', 'set-mute', '@DEFAULT_AUDIO_SOURCE@', 'toggle'],
         'lock': ['hyprlock'],
+        'scratchpad': ['hyprctl', 'dispatch', 'hl.dsp.workspace.toggle_special("magic")'],
+        'console': ['hyprctl', 'dispatch', 'hl.dsp.workspace.toggle_special("qconsole")'],
     }
     try:
         if args.action == 'browser':

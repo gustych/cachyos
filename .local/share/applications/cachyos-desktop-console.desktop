@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Drop-down console — Super+grave
+Comment=Show or hide a persistent Ghostty terminal
+Exec=/home/gusta/.local/bin/desktop-menu console
+Icon=utilities-terminal
+Terminal=false
+Categories=Utility;
+Keywords=terminal;scratchpad;console;

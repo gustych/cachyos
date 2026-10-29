@@ -87,7 +87,10 @@ hl.config({ ["input.touchpad.scroll_factor"] = 1.0 })
 hl.device({ ["name"] = "epic-mouse-v1", ["sensitivity"] = -0.5 })
 hl.bind("SUPER + Q", hl.dsp.exec_cmd("ghostty"), { description = "Terminal (temporary alias)" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd("dolphin"), { description = "File manager" })
-hl.bind("SUPER + R", hl.dsp.exec_cmd("fuzzel"), { description = "Apps (temporary alias)" })
+hl.bind("SUPER + R", function()
+    hl.dispatch(hl.dsp.submap("resize"))
+    hl.exec_cmd("hyprctl notify 1 2500 0 'Resize: arrows or H/J/K/L; Shift for larger steps; Escape to exit'")
+end, { description = "Enter resize mode" })
 hl.bind("SUPER + D", hl.dsp.exec_cmd("fuzzel"), { description = "Apps (temporary alias)" })
 hl.bind("SUPER + P", hl.dsp.window.pseudo(), { description = "Pseudo window style" })
 hl.bind("SUPER + J", hl.dsp.layout("swapwithmaster"), { description = "Swap with master (layout dependent)" })
@@ -116,8 +119,8 @@ hl.bind("SUPER + SHIFT + 7", hl.dsp.window.move({ workspace = "7", follow = true
 hl.bind("SUPER + SHIFT + 8", hl.dsp.window.move({ workspace = "8", follow = true }), { description = "Move window to workspace 8" })
 hl.bind("SUPER + SHIFT + 9", hl.dsp.window.move({ workspace = "9", follow = true }), { description = "Move window to workspace 9" })
 hl.bind("SUPER + SHIFT + 0", hl.dsp.window.move({ workspace = "10", follow = true }), { description = "Move window to workspace 10" })
-hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle scratchpad" })
-hl.bind("SUPER + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic", follow = true }), { description = "Move window to scratchpad" })
+hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle full scratchpad" })
+hl.bind("SUPER + ALT + S", hl.dsp.window.move({ workspace = "special:magic", follow = false }), { description = "Move window to full scratchpad" })
 hl.bind("SUPER + T", smart_toggle_float, { description = "Toggle floating/tiling" })
 hl.bind("SUPER + Tab", hl.dsp.window.cycle_next(), { description = "Cycle windows" })
 hl.bind("SUPER + SHIFT + Tab", hl.dsp.window.swap({ next = true }), { description = "Swap next window" })
@@ -175,3 +178,73 @@ hl.bind("Print", hl.dsp.exec_cmd("~/.local/bin/desktop-menu screenshot"), { desc
 hl.bind("SUPER + W", hl.dsp.window.close(), { description = "Close window" })
 hl.bind("SUPER + F", hl.dsp.window.fullscreen({ mode = "fullscreen" }), { description = "Fullscreen" })
 hl.bind("SUPER + SHIFT + F", hl.dsp.window.fullscreen({ mode = "maximized" }), { description = "Maximize" })
+
+-- Persistent, lazy-started Ghostty scratchpads. The full scratchpad keeps its
+-- existing workspace name so previously parked windows remain available.
+hl.config({ ["decoration.dim_special"] = 0.6 })
+hl.workspace_rule({
+    workspace = "special:magic",
+    on_created_empty = "[workspace special:magic silent] ghostty --class=com.gusta.scratchpad",
+})
+
+local console_workspace = "special:qconsole"
+local last_console_geometry = ""
+local function resize_console()
+    local workspace = hl.get_workspace(console_workspace)
+    local monitor = workspace and workspace.visible and workspace.monitor or hl.get_active_monitor()
+    if not monitor or not monitor.scale or monitor.scale <= 0 then return end
+    local width, height = monitor.width, monitor.height
+    if monitor.transform % 2 == 1 then width, height = height, width end
+    local reserved = monitor.reserved
+    width = width / monitor.scale - reserved.left - reserved.right
+    height = height / monitor.scale - reserved.top - reserved.bottom
+    local count = 0
+    for _, window in ipairs(hl.get_workspace_windows(console_workspace)) do
+        if not window.floating then count = count + 1 end
+    end
+    local panel_height = math.floor(height / 2)
+    local panel_width = count > 1 and width or math.min(width, panel_height * 2)
+    local margin = math.floor((width - panel_width) / 2)
+    local bottom = math.floor(height - panel_height)
+    local geometry = tostring(margin) .. ":" .. tostring(bottom)
+    if geometry == last_console_geometry then return end
+    last_console_geometry = geometry
+    hl.workspace_rule({
+        workspace = console_workspace,
+        gaps_in = 0,
+        gaps_out = { top = 0, left = margin, right = margin, bottom = bottom },
+        no_border = true,
+        on_created_empty = "[workspace special:qconsole silent] ghostty --class=com.gusta.qconsole",
+    })
+    hl.exec_scheduled_prop_refresh_immediately()
+end
+resize_console()
+for _, event in ipairs({ "monitor.layout_changed", "monitor.focused", "workspace.special_active",
+                         "workspace.move_to_monitor", "window.open", "window.destroy",
+                         "window.move_to_workspace", "window.update_rules" }) do
+    hl.on(event, resize_console)
+end
+hl.bind("SUPER + grave", hl.dsp.workspace.toggle_special("qconsole"), { description = "Toggle drop-down console" })
+hl.bind("SUPER + SHIFT + grave", hl.dsp.window.move({ workspace = console_workspace, follow = false }), { description = "Move window to drop-down console" })
+
+-- Modal resizing: release Super+R, then use arrows or Vim keys.
+hl.define_submap("resize", function()
+    local directions = {
+        { "left", "H", -1, 0, "Narrower" },
+        { "right", "L", 1, 0, "Wider" },
+        { "up", "K", 0, -1, "Shorter" },
+        { "down", "J", 0, 1, "Taller" },
+    }
+    for _, direction in ipairs(directions) do
+        for _, key in ipairs({ direction[1], direction[2] }) do
+            for _, step in ipairs({ { "", 25 }, { "SHIFT + ", 100 } }) do
+                hl.bind(step[1] .. key,
+                    hl.dsp.window.resize({ x = direction[3] * step[2], y = direction[4] * step[2], relative = true }),
+                    { repeating = true, description = direction[5] .. " (" .. step[2] .. "px)" })
+            end
+        end
+    end
+    for _, key in ipairs({ "Escape", "Return", "SUPER + R" }) do
+        hl.bind(key, hl.dsp.submap("reset"), { description = "Exit resize mode" })
+    end
+end)

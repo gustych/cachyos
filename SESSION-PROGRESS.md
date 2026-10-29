@@ -517,3 +517,15 @@ Implemented the desktop-polish tickets: Fuzzel searches apps and eleven desktop 
 Automated CLI, configuration, desktop-entry, live-binding and Wayland capture checks pass. Interactive visual, screenshot paste and lock/unlock checks remain pending; tickets are awaiting-user-verification. See docs/desktop-workflow.md for exact commands, deployment and recovery. Deployment backup: /home/gusta/.local/state/desktop-polish/20261029-100401-771174. No reboot, shutdown, suspend or lock was triggered by tests.
 
 2026-10-29 verification follow-up: the user confirmed the requested interactive desktop checks worked. Closed the four desktop-polish tickets. The transient Super+Return/Escape report resolved without a configuration change; no root cause is claimed.
+
+
+## 2026-10-29: Full scratchpad and drop-down console
+
+Added Omarchy-style scratchpad shortcuts: Super+S toggles the full existing magic workspace; Super+Alt+S parks a window there without following. Super+grave toggles a separate half-height console; Super+Shift+grave parks a window in it. Both seed an ordinary Ghostty shell lazily and reuse the same process across hide/show. Console sizing updates for monitor/window changes, becoming full width for multiple tiled windows. Added two searchable desktop menu entries. Physical keypress verification remains with the user.
+
+Live checks verified lazy launch, persistent PIDs, hide/show, geometry, two-window expansion and return to centered single-window size. Hyprland and desktop-entry checks pass; existing 13 CLI tests pass. Scratchpad-only rollback: python3 /home/gusta/.local/state/desktop-polish/20261029-111721-103491/restore.py. See docs/desktop-workflow.md for recovery and keyboard use.
+
+
+## 2026-10-29: Super+R resize mode
+
+Replaced the redundant app-launcher alias with modal resizing: arrows or H/J/K/L, 25px steps, Shift for 100px, repeating keys. Escape, Return or Super+R exits. Existing app launching remains on Super+Space and Super+D. Validated Lua/Hyprland parsing, 19 registered resize bindings, mode entry and injected-Escape exit. Exact prior live configuration: /home/gusta/.local/state/desktop-polish/resize-20261029-122720/hyprland.lua.

@@ -17,14 +17,16 @@ The desktop uses CachyOS, Hyprland 0.57 Lua configuration, Fuzzel, Ghostty and D
 | Lock | Super+Ctrl+L |
 | Power menu | Super+Escape |
 | Region screenshot | Print |
+| Full scratchpad / move window into it | Super+S / Super+Alt+S |
+| Drop-down console / move window into it | Super+grave / Super+Shift+grave |
 | Focus window | Super+arrows |
 | Switch / move window to workspace | Super+number / Super+Shift+number |
 
-Temporary aliases: Super+Q still opens Ghostty; Super+D and Super+R still open the app launcher. When those aliases are no longer useful, remove their bindings from the managed Lua source and redeploy. Super+C, Super+V, and the old immediate session exit on Super+M have been removed. Window cycling, scratchpad, wallpapers, mouse controls and media keys retain their previous behavior.
+Temporary aliases: Super+Q still opens Ghostty; Super+D still opens the app launcher. Super+R now enters resize mode. When those aliases are no longer useful, remove their bindings from the managed Lua source and redeploy. Super+C, Super+V, and the old immediate session exit on Super+M have been removed. Window cycling, scratchpad, wallpapers, mouse controls and media keys retain their previous behavior.
 
 ## Menu actions
 
-Applications and eleven desktop action entries share Fuzzel's normal search. Audio opens pavucontrol, Bluetooth opens Blueman, and networking opens nmtui in Ghostty. Browser launch resolves the configured HTTPS handler (currently Zen). Microphone mute uses the existing audio device controls. Power offers lock, reboot and shutdown; reboot/shutdown require a separate confirmation with Cancel selected first. Suspending is not introduced by this change.
+Applications and thirteen desktop action entries share Fuzzel's normal search. Audio opens pavucontrol, Bluetooth opens Blueman, and networking opens nmtui in Ghostty. Browser launch resolves the configured HTTPS handler (currently Zen). Microphone mute uses the existing audio device controls. Power offers lock, reboot and shutdown; reboot/shutdown require a separate confirmation with Cancel selected first. Suspending is not introduced by this change.
 
 Screenshots ask for a region, then offer Cancel, Save, Copy, or Save and copy. Cancelling either step leaves the clipboard and saved images alone. Images are saved with unique names under the XDG Pictures directory's Screenshots subdirectory, or under ~/Pictures/Screenshots when no XDG setting is available. Files are private to the user by default. Clipboard history is not added.
 
@@ -43,7 +45,7 @@ Verified automatically on 2026-10-29:
 - Thirteen isolated CLI tests cover reboot confirmation, cancellation, rejection of arbitrary menu text, screenshot copy/save/cancel, unique names, and missing-tool feedback. External tools are faked in these tests; no shutdown or locking occurs.
 - Lua syntax, Hyprland's own configuration verifier, Fuzzel configuration, and desktop entry validation pass.
 - The running session reports no config errors and no duplicate shortcuts. New shortcuts are registered and the superseded bindings are absent.
-- All eleven desktop actions are indexed through GIO, all tool targets exist, and the default HTTPS handler resolves to Zen.
+- All thirteen desktop actions are indexed through GIO, all tool targets exist, and the default HTTPS handler resolves to Zen.
 - The real Fuzzel launcher and help processes open successfully, then were cleaned up by terminating only the test processes. This is a smoke check, not a claim that keyboard selection was exercised.
 - A real 1x1 region capture returns a valid PNG in memory, without saving a screenshot or changing the clipboard.
 
@@ -79,3 +81,29 @@ fuzzel --config "$PWD/.config/fuzzel/fuzzel.ini" --check-config
 ```
 
 User confirmation on 2026-10-29: after Super+Return and Super+Escape initially failed, both worked during diagnosis without a configuration change. The cause was not established. Following the request to check help, screenshots and lock/unlock, the user replied "it worked". The desktop-polish tickets are closed on this confirmation; this does not change which checks the agent directly observed.
+
+## Full scratchpad and drop-down console
+
+Both use persistent Ghostty terminals, started only when the workspace is first opened empty. Hiding a scratchpad leaves its terminal and running commands alive. Full scratchpad uses the existing special:magic workspace on Super+S, preserving previously parked windows. Super+Alt+S moves the focused window there without following it; this replaces the old Super+Shift+S shortcut.
+
+Super+grave (the backtick key) toggles a separate console. It occupies half the usable screen height, centered at the top for one tiled window, and expands across the screen when there are multiple tiled windows. Super+Shift+grave parks the current window there without following. Super+Shift+number moves a window back to a regular workspace. Both scratchpads are available through the app/action menu and appear in Super+K help. Their background dims while visible.
+
+Behavior follows Omarchy's full scratchpad and Quake-console pattern, adapted to the installed Hyprland 0.57 Lua API. Both start an ordinary Ghostty shell; no Omarchy coding-agent setup is introduced. Geometry responds to monitor layout and window changes; only the current single-monitor setup was exercised directly.
+
+Live checks on 2026-10-29 verified lazy opening, hide/reopen with unchanged terminal PID, correct workspaces, a full-area scratchpad, a centered half-height console, full-width expansion for two tiled windows, and re-centering after the extra test window closed. Both terminals were left running and hidden, ready for use. The temporary second test window was closed. The existing 13 CLI tests still pass. Physical shortcut presses remain for the user to verify.
+
+To undo only this scratchpad addition, first move any windows you want to keep to a regular workspace using Super+Shift+number. Then run:
+
+```bash
+python3 /home/gusta/.local/state/desktop-polish/20261029-111721-103491/restore.py
+```
+
+This returns to the prior verified desktop configuration. As with ordinary configuration rollback, it does not terminate terminal processes; any console still parked can be revealed with `hyprctl dispatch 'hl.dsp.workspace.toggle_special("qconsole")'` and moved to a normal workspace.
+
+## Keyboard resize mode
+
+Press Super+R, release the keys, then use arrows or H/J/K/L. Left/H makes a window narrower, Right/L wider, Up/K shorter, and Down/J taller. Each step is 25 logical pixels; hold Shift for 100-pixel steps. Keys repeat while held. Escape, Return, or Super+R exits resize mode. A short on-screen hint confirms entry. Tiled windows resize within the layout's constraints; floating windows resize directly.
+
+This replaces only the redundant Super+R launcher alias. Super+Space and Super+D retain app launching. Verified: configuration parses, all 19 resize-mode bindings register, entering the mode works, and an injected Escape key returns to normal mode. Physical keypresses and your preferred sizing feel remain to check.
+
+Resize-only rollback: restore `/home/gusta/.local/state/desktop-polish/resize-20261029-122720/hyprland.lua` to `~/.config/hypr/hyprland.lua`, then run `hyprctl reload config-only`. To leave a stuck resize mode immediately, run `hyprctl dispatch 'hl.dsp.submap("reset")'` from a terminal.
