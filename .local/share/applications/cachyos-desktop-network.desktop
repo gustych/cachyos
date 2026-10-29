@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Network settings
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu network
+Icon=network-wireless
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

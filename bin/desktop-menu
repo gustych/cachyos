@@ -1,0 +1,156 @@
+#!/usr/bin/python3
+"""CachyOS desktop actions. External commands are always argv, never shell input."""
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+from datetime import datetime
+
+
+def run(argv, **kwargs):
+    if not shutil.which(argv[0]):
+        raise RuntimeError(f'{argv[0]} is unavailable. See the desktop workflow guide.')
+    return subprocess.run(argv, check=True, **kwargs)
+
+
+def notify(message):
+    print(message, file=sys.stderr)
+    if shutil.which('notify-send'):
+        result = subprocess.run(['notify-send', 'Desktop', message], check=False,
+                                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if result.returncode == 0:
+            return
+    if shutil.which('hyprctl'):
+        subprocess.run(['hyprctl', 'notify', '-1', '5000', 'rgb(888888)', message],
+                       check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def choose(prompt, items):
+    result = subprocess.run(['fuzzel', '--dmenu', '--only-match', '--no-sort',
+                             '--prompt', prompt], input='\n'.join(items),
+                            text=True, capture_output=True)
+    if result.returncode == 2:
+        return None
+    if result.returncode:
+        raise RuntimeError(result.stderr.strip() or 'Fuzzel menu failed')
+    selected = result.stdout.strip()
+    return selected if selected in items else None
+
+
+def confirm_power(action):
+    label = {'reboot': 'Reboot', 'poweroff': 'Shut down'}[action]
+    if choose(f'{label}? ', ['Cancel', label]) == label:
+        run(['systemctl', action])
+
+
+def power():
+    selection = choose('Power: ', ['Cancel', 'Lock', 'Reboot', 'Shut down'])
+    if selection in ('Reboot', 'Shut down'):
+        confirm_power('reboot' if selection == 'Reboot' else 'poweroff')
+    elif selection == 'Lock':
+        run(['hyprlock'])
+
+
+def shortcuts():
+    binds = json.loads(run(['hyprctl', 'binds', '-j'], capture_output=True, text=True).stdout)
+    rows = []
+    for binding in binds:
+        mods = binding['modmask']
+        keys = [label for mask, label in ((64, 'Super'), (4, 'Ctrl'), (8, 'Alt'), (1, 'Shift')) if mods & mask]
+        keys.append(binding['key'])
+        desc = binding.get('description') or binding['dispatcher'].removeprefix('HL.Dispatcher(').removesuffix(')')
+        submap = binding.get('submap')
+        rows.append(f'{"+".join(keys):32} {desc}' + (f' [{submap}]' if submap else ''))
+    choose('Shortcuts (Esc closes): ', sorted(rows))
+
+
+def screenshot():
+    for tool in ('slurp', 'grim', 'wl-copy', 'fuzzel'):
+        if not shutil.which(tool):
+            raise RuntimeError(f'{tool} is unavailable; install grim, slurp and wl-clipboard')
+    region = subprocess.run(['slurp'], capture_output=True, text=True)
+    if region.returncode == 1 and not region.stderr.strip():
+        return
+    if region.returncode:
+        raise RuntimeError(region.stderr.strip() or 'Region selection failed')
+    geometry = region.stdout.strip()
+    if not geometry:
+        return
+    image = run(['grim', '-g', geometry, '-'], capture_output=True).stdout
+    selection = choose('Screenshot: ', ['Cancel', 'Save', 'Copy', 'Save and copy'])
+    if selection is None or selection == 'Cancel':
+        return
+    saved = None
+    if selection in ('Save', 'Save and copy'):
+        pictures = Path.home() / 'Pictures'
+        if shutil.which('xdg-user-dir'):
+            directory = run(['xdg-user-dir', 'PICTURES'], capture_output=True, text=True).stdout.strip()
+            if directory and Path(directory).is_absolute():
+                pictures = Path(directory)
+        directory = pictures / 'Screenshots'
+        directory.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(prefix=datetime.now().strftime('Screenshot-%Y%m%d-%H%M%S-'),
+                                         suffix='.png', dir=directory, delete=False) as output:
+            output.write(image)
+            saved = output.name
+    if selection in ('Copy', 'Save and copy'):
+        run(['wl-copy', '--type', 'image/png'], input=image)
+    notify(('Saved ' + saved if saved else 'Screenshot copied') +
+           (' and copied to clipboard' if selection == 'Save and copy' else ''))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('action', nargs='?', default='menu', choices=[
+        'menu', 'help', 'terminal', 'browser', 'files', 'audio', 'bluetooth',
+        'network', 'mic', 'lock', 'power', 'reboot', 'poweroff', 'screenshot',
+        'scratchpad', 'console'])
+    args = parser.parse_args()
+    commands = {
+        'menu': ['fuzzel', '--terminal=ghostty -e'],
+        'terminal': ['ghostty'],
+        'files': ['dolphin'], 'audio': ['pavucontrol'],
+        'bluetooth': ['blueman-manager'], 'network': ['ghostty', '-e', 'nmtui'],
+        'mic': ['wpctl', 'set-mute', '@DEFAULT_AUDIO_SOURCE@', 'toggle'],
+        'lock': ['hyprlock'],
+        'scratchpad': ['hyprctl', 'dispatch', 'hl.dsp.workspace.toggle_special("magic")'],
+        'console': ['hyprctl', 'dispatch', 'hl.dsp.workspace.toggle_special("qconsole")'],
+    }
+    try:
+        if args.action == 'browser':
+            from gi.repository import Gio, GLib
+            try:
+                app = Gio.AppInfo.get_default_for_uri_scheme('https')
+                if app is None:
+                    raise RuntimeError('No default browser is configured')
+                if not app.launch([], None):
+                    raise RuntimeError('Default browser could not be launched')
+            except GLib.Error as error:
+                raise RuntimeError(f'Default browser could not be launched: {error}') from error
+        elif args.action in commands:
+            if args.action == 'menu':
+                result = subprocess.run(commands['menu'], check=False)
+                if result.returncode not in (0, 2):
+                    raise RuntimeError(f'Fuzzel failed (exit {result.returncode})')
+            else:
+                run(commands[args.action])
+        elif args.action in ('reboot', 'poweroff'):
+            confirm_power(args.action)
+        elif args.action == 'power':
+            power()
+        elif args.action == 'help':
+            shortcuts()
+        elif args.action == 'screenshot':
+            screenshot()
+    except (RuntimeError, OSError, ImportError, subprocess.CalledProcessError, ValueError) as error:
+        notify(str(error))
+        return 1
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

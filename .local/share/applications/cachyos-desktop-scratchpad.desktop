@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Full scratchpad — Super+S
+Comment=Show or hide a persistent Ghostty terminal
+Exec=/home/gusta/.local/bin/desktop-menu scratchpad
+Icon=utilities-terminal
+Terminal=false
+Categories=Utility;
+Keywords=terminal;scratchpad;console;

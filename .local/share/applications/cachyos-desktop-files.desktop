@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=File manager — Super+E
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu files
+Icon=system-file-manager
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

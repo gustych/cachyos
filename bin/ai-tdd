@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+TOOL="${1:-opencode}"
+[ -z "$TMUX" ] && echo "Error: Not in tmux" && exit 1
+CURRENT_PANE=$(tmux display-message -p '#{pane_id}')
+tmux split-window -v -c "#{pane_current_path}" "$TOOL"
+tmux split-window -h -c "#{pane_current_path}" "echo 'Run tests here'"
+tmux select-pane -t "$CURRENT_PANE"
+echo "TDD mode started"

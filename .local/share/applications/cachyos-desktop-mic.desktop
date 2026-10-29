@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Toggle microphone mute — MicMute
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu mic
+Icon=microphone-sensitivity-muted
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;

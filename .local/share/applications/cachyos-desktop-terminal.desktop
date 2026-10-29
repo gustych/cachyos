@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Terminal — Super+Return
+Comment=CachyOS desktop action
+Exec=/home/gusta/.local/bin/desktop-menu terminal
+Icon=utilities-terminal
+Terminal=false
+Categories=Utility;
+Keywords=desktop;settings;actions;
